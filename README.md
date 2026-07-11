@@ -115,7 +115,13 @@ bun run build                              # outputs app/dist/
 ```
 
 `app/dist/` is a static site — host it on Netlify, Vercel, Cloudflare Pages, or any static
-host. Two things to configure:
+host.
+
+**Vercel (zero config)**: the root [`vercel.json`](vercel.json) already sets the install/build
+commands, output directory, and SPA rewrites — import the GitHub repo at
+[vercel.com/new](https://vercel.com/new) and deploy with all defaults.
+
+For other hosts, two things to configure:
 
 1. **SPA fallback**: rewrite all routes to `/index.html` (e.g. Netlify `/_redirects`:
    `/*  /index.html  200`) so `/view/<slug>` deep links work.
