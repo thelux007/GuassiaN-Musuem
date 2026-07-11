@@ -1,7 +1,8 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { runGptImage2Edit } from "./gpt-image-2-edit.mjs";
 import { runNanoBananaEdit } from "./nano-banana-edit.mjs";
 import { loadDotEnv, many, one, parseArgs } from "./fal-queue.mjs";
+import { isMainModule } from "./fal-queue.mjs";
 import { requestPath } from "./request-metadata.mjs";
 
 const PROVIDERS = new Set(["nano-banana", "gpt-image-2"]);
@@ -75,7 +76,7 @@ async function main() {
   console.log(JSON.stringify(summary, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);

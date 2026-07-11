@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import {
   callFalQueue,
   collectRemoteFiles,
@@ -16,6 +16,7 @@ import {
   toModelInputUrl,
   writeJson
 } from "../asset-pipeline/fal-queue.mjs";
+import { isMainModule } from "../asset-pipeline/fal-queue.mjs";
 import {
   artifactPath,
   buildRequestSummary,
@@ -285,7 +286,7 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);

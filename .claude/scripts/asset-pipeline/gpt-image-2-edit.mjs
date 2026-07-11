@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import path from "node:path";
 import {
   callFalQueue,
@@ -10,6 +10,7 @@ import {
   toModelInputUrl,
   writeJson
 } from "./fal-queue.mjs";
+import { isMainModule } from "./fal-queue.mjs";
 import { buildRequestSummary, requestPath } from "./request-metadata.mjs";
 
 const ENDPOINT = "openai/gpt-image-2/edit";
@@ -105,7 +106,7 @@ async function main() {
   console.log(JSON.stringify(summary, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { rm } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -6,6 +6,7 @@ import {
   parseArgs,
   pathExists
 } from "../asset-pipeline/fal-queue.mjs";
+import { isMainModule } from "../asset-pipeline/fal-queue.mjs";
 
 const ALLOWED_ROOTS = ["worlds", "input"];
 
@@ -55,7 +56,7 @@ async function main() {
   console.log(JSON.stringify({ action: "deleted", path: relative, recursive }, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);

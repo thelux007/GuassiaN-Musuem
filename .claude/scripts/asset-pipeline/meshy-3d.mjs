@@ -1,5 +1,6 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { one, parseArgs } from "./fal-queue.mjs";
+import { isMainModule } from "./fal-queue.mjs";
 import { runFalImageTo3DProvider } from "./fal-3d-provider.mjs";
 
 export const MESHY_3D_ENDPOINT = "fal-ai/meshy/v6/image-to-3d";
@@ -143,7 +144,7 @@ async function main() {
   console.log(JSON.stringify(summary, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);

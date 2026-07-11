@@ -1,5 +1,7 @@
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
-import { useRoute, useLocation, Redirect } from 'wouter'
+import { useRoute, useLocation, Redirect, Route, Switch } from 'wouter'
+import { GalleryPage } from './gallery/GalleryPage'
+import { ViewerPage } from './gallery/ViewerPage'
 import { WorldViewer } from './components/WorldViewer'
 import { WorldSidebar } from './components/WorldSidebar'
 import { BottomLeftControls, ViewerModeHotkeys } from './components/BottomLeftControls'
@@ -19,6 +21,20 @@ const DebugPanel = import.meta.env.DEV
   : null
 
 export function App() {
+  return (
+    <Switch>
+      {/* public client gallery */}
+      <Route path="/" component={GalleryPage} />
+      <Route path="/view/:slug" component={ViewerPage} />
+      {/* existing world editor / dev viewer at /:slug and /:slug/edit */}
+      <Route>
+        <EditorApp />
+      </Route>
+    </Switch>
+  )
+}
+
+function EditorApp() {
   const [worlds, setWorlds] = useState(loadWorlds)
   const [refreshingWorlds, setRefreshingWorlds] = useState(false)
   const refreshTimeoutRef = useRef<number | undefined>(undefined)
@@ -148,7 +164,7 @@ function LoadedApp({
   }, [])
 
   if (!editMatch && !match) {
-    return <Redirect to={`/${worlds[0].slug}`} />
+    return <Redirect to="/" />
   }
 
   return (

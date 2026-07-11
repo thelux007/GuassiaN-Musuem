@@ -55,6 +55,80 @@ IMAGE-BLASTER uses a few generation models:
 - A film location scout? `IMAGE-BLAST` it.
 - An architectural rendering? `IMAGE-BLAST` it.
 
+## Client Gallery Website
+
+The app now ships with a public-facing gallery for showcasing Gaussian splat captures:
+
+- `/` — dark, image-first gallery landing page with search and category filters.
+- `/view/<slug>` — full-screen interactive splat viewer (orbit, reset view, fullscreen, loading progress, graceful error screen).
+- `/<world-slug>` and `/<world-slug>/edit` — the original Image Blaster world editor, unchanged.
+
+### Run locally
+
+```bash
+bun install && bun run dev      # or: npm install --prefix app && npm run dev --prefix app
+```
+
+Then open `http://localhost:5173/`.
+
+### Add a project to the gallery
+
+All gallery content lives in one typed file: [`app/src/gallery/projects.ts`](app/src/gallery/projects.ts).
+Add an entry to `GALLERY_PROJECTS`:
+
+```ts
+{
+  slug: 'client-loft',                     // viewer route: /view/client-loft
+  title: 'Client Loft',
+  description: 'Shown in the viewer info panel.',
+  category: 'Interiors',                   // Architecture | Interiors | Products | Landscapes
+  location: 'Cape Town, ZA',               // optional card subtitle
+  thumbnailUrl: '/thumbnails/client-loft.webp',
+  aspect: 4 / 3,                           // card aspect ratio in the masonry grid
+  splat: {
+    url: 'https://cdn.example.com/splats/client-loft.spz',
+    metricScaleFactor: 0.69,               // from the World Labs semantics metadata
+    groundPlaneOffset: 1.57,
+    flipY: true,
+  },
+  camera: {                                // optional initial framing
+    position: [0, 1.55, -0.2],
+    target: [-0.2, 1.15, -2],
+  },
+}
+```
+
+Where files go:
+
+- **Thumbnails** — `app/public/thumbnails/` (referenced as `/thumbnails/<file>`), or reuse a
+  generated world thumbnail like `/worlds/<slug>/output/world/0-world-thumbnail.webp`.
+  Entries without a thumbnail get a tasteful generated gradient placeholder.
+- **Splat assets** (`.spz`) — during development, world files in `worlds/` are served at
+  `/worlds/...` automatically. For small local demos you can also put files in `app/public/`.
+- Projects have a `visibility` field reserved for future password-protected/private client
+  projects; nothing is gated yet.
+
+### Deploy the gallery publicly
+
+```bash
+bun run build                              # outputs app/dist/
+```
+
+`app/dist/` is a static site — host it on Netlify, Vercel, Cloudflare Pages, or any static
+host. Two things to configure:
+
+1. **SPA fallback**: rewrite all routes to `/index.html` (e.g. Netlify `/_redirects`:
+   `/*  /index.html  200`) so `/view/<slug>` deep links work.
+2. **Splat hosting**: serve large `.spz` files from CDN/object storage (Cloudflare R2, S3 +
+   CloudFront, Bunny, etc.), **not** bundled into the repo or build — they are tens of
+   megabytes each. Use absolute URLs in `projects.ts`, or set `VITE_ASSET_BASE_URL` in `.env`
+   to prefix every relative asset URL with your CDN origin at build time. Make sure the
+   bucket sends permissive CORS headers (`Access-Control-Allow-Origin`) for your site.
+
+Anything placed in `app/public/` (thumbnails, small demo splats) is copied into the build
+as-is. The dev-only `/worlds/...` middleware does not exist in production, so worlds you
+want public must be uploaded to your CDN (or copied into `app/public/worlds/...`).
+
 ### Development
 
 - remove `/app` from the `.claudeignore` file to give Claude the ability to change the React viewer.

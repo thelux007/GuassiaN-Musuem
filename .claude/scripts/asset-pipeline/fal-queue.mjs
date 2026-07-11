@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 let envLoaded = false;
 
@@ -449,4 +450,8 @@ export async function callFalQueue(endpoint, input, options = {}) {
     status: status.status,
     data: result.data
   };
+}
+
+export function isMainModule(importMetaUrl) {
+  return importMetaUrl === pathToFileURL(process.argv[1]).href;
 }

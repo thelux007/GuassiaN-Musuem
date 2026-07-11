@@ -32,6 +32,11 @@ interface Props {
   groundPlaneOffset?: number
   flipY?: boolean
   metricScaleFactor?: number
+  /** Allow the debug-store depth-of-field to apply. The public viewer opts out. */
+  enableDof?: boolean
+  onProgress?: (event: ProgressEvent) => void
+  onLoad?: () => void
+  onError?: (error: unknown) => void
 }
 
 
@@ -41,6 +46,10 @@ export function SplatRenderer({
   groundPlaneOffset = 0,
   flipY,
   metricScaleFactor = 1,
+  enableDof = true,
+  onProgress,
+  onLoad,
+  onError,
 }: Props) {
     const renderer = useThree((state) => state.gl)
     const viewerQuality = useDebugStore((s) => s.viewerQuality)
@@ -48,6 +57,14 @@ export function SplatRenderer({
     const sparkRef = useRef<SparkRenderer>(null)
     const encodeLinear = viewerQuality === ViewerQuality.High
     const initialEncodeLinear = useRef(encodeLinear)
+    // Keep callback identity out of splatArgs so changing handlers never
+    // recreates the SplatMesh (which would restart the download).
+    const onProgressRef = useRef(onProgress)
+    const onLoadRef = useRef(onLoad)
+    const onErrorRef = useRef(onError)
+    onProgressRef.current = onProgress
+    onLoadRef.current = onLoad
+    onErrorRef.current = onError
 
     // Patch the SparkRenderer's vertex shader once to add our custom CoC curve
     // and inject `sharpRange` / `falloffRate` uniforms.
@@ -73,7 +90,7 @@ export function SplatRenderer({
       const s = useDebugStore.getState()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const u = spark.material.uniforms as any
-      if (s.viewerQuality === ViewerQuality.High && s.dofEnabled) {
+      if (enableDof && s.viewerQuality === ViewerQuality.High && s.dofEnabled) {
         spark.focalDistance = s.focalDistance
         spark.apertureAngle = s.apertureAngle
         spark.falloff = s.falloff
@@ -95,10 +112,17 @@ export function SplatRenderer({
       if (sparkRef.current) sparkRef.current.encodeLinear = encodeLinear
     }, [encodeLinear])
 
+    useEffect(() => {
+      splatRef.current?.initialized
+        .then(() => onLoadRef.current?.())
+        .catch((error: unknown) => onErrorRef.current?.(error))
+    }, [url])
+
     const sparkArgs = useMemo(() => ({ renderer, enableLod: true, encodeLinear: initialEncodeLinear.current }), [renderer])
     const splatArgs = useMemo(
       () => ({
         url,
+        onProgress: (event: ProgressEvent) => onProgressRef.current?.(event),
       }),
       [url],
     )

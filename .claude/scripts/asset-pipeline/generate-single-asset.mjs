@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 import { readdir, rename } from "node:fs/promises";
 import path from "node:path";
 import {
@@ -39,6 +39,7 @@ import {
   slugify,
   writeJson
 } from "./fal-queue.mjs";
+import { isMainModule } from "./fal-queue.mjs";
 import {
   artifactPath,
   buildRequestSummary,
@@ -628,7 +629,7 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message);
     process.exit(1);
