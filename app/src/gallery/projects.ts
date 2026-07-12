@@ -82,6 +82,23 @@ export function resolveAssetUrl(url: string): string {
 
 export const GALLERY_PROJECTS: GalleryProject[] = [
   {
+    slug: 'cape-town-gate-b36',
+    title: 'Cape Town Gate B36',
+    description:
+      'An airport departure lounge captured as a Gaussian splat — a floor-to-ceiling glass curtain wall opening onto the apron, an Airlink jet parked at the jet bridge, and the Gate B36 / Cape Town signage overhead. Generated from a single source image via Image Blaster.',
+    category: 'Architecture',
+    location: 'Image Blaster world',
+    thumbnailUrl: '/worlds/cape-town-gate-b36/output/world/0-world-thumbnail.webp',
+    aspect: 16 / 9,
+    splat: {
+      url: '/worlds/cape-town-gate-b36/output/world/0-world-full_res.spz',
+      metricScaleFactor: 2.5501666,
+      groundPlaneOffset: 1.6630319,
+      flipY: true,
+    },
+  },
+
+  {
     slug: 'led-room',
     title: 'LED Room',
     description:
@@ -95,6 +112,27 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
       metricScaleFactor: 0.6899165,
       groundPlaneOffset: 1.5678971,
       flipY: true,
+    },
+  },
+
+  {
+    slug: 'red-led-hall',
+    title: 'Red LED Hall',
+    description:
+      'A deep crimson hall captured as a Gaussian splat — a glowing dot-grid light wall, a matching gridded ceiling, and a raised platform edged in light, all wrapped in haze.',
+    category: 'Architecture',
+    location: 'Image Blaster world',
+    thumbnailUrl: '/worlds/red-led-hall/output/world/0-world-thumbnail.webp',
+    aspect: 3 / 2,
+    splat: {
+      url: '/worlds/red-led-hall/output/world/0-world-full_res.spz',
+      metricScaleFactor: 0.50195265,
+      groundPlaneOffset: 0.7008745,
+      flipY: true,
+    },
+    camera: {
+      position: [0, 1.3, 0],
+      target: [0, 0.95, 1.7],
     },
   },
 
